@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Werft-Portal (Demo)</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="page">
+    <!-- Login Screen -->
+    <section id="login-screen" class="card card--center">
+      <header class="header">
+        <div class="brand">
+          <div class="brand__logo" aria-hidden="true">⚓️</div>
+          <div class="brand__text">
+            <h1>Werft-Portal</h1>
+            <p class="muted">Interner Zugang • Demo</p>
+          </div>
+        </div>
+      </header>
+
+      <form id="login-form" class="form" autocomplete="off">
+        <div class="form__row">
+          <label for="username">Benutzername</label>
+          <input id="username" name="username" type="text" inputmode="email" required placeholder="Benutzername" />
+        </div>
+        <div class="form__row">
+          <label for="password">Passwort</label>
+          <div class="password-field">
+            <input id="password" name="password" type="password" required placeholder="Passwort" />
+            <button class="btn btn--ghost" id="toggle-password" type="button" aria-pressed="false" aria-label="Passwort anzeigen">
+              👁
+            </button>
+          </div>
+        </div>
+        <div class="form__row form__actions">
+          <button class="btn btn--primary" type="submit">Anmelden</button>
+        </div>
+        <p id="login-error" class="error" role="alert" aria-live="polite" hidden>Ungültige Zugangsdaten.</p>
+      </form>
+    </section>
+
+    <!-- Database Screen -->
+    <section id="db-screen" class="card card--full" hidden>
+      <header class="topbar">
+        <div class="brand small">
+          <div class="brand__logo" aria-hidden="true">⚓️</div>
+          <div class="brand__text">
+            <strong>Werft-Portal</strong>
+            <span class="badge">Demo</span>
+          </div>
+        </div>
+        <div class="topbar__actions">
+          <input id="filter" class="input" type="search" placeholder="Suchen (Kunde, Schiff, Auftrag, E‑Mail…)" aria-label="Tabelle filtern" />
+          <button id="exportCsv" class="btn btn--ghost" type="button">CSV exportieren</button>
+          <button id="logout" class="btn" type="button">Abmelden</button>
+        </div>
+      </header>
+
+      <div class="table-wrap">
+        <table id="customers" class="table" aria-describedby="table-caption">
+          <caption id="table-caption" class="muted">Kundendaten • rein fiktiv, zu Demonstrationszwecken</caption>
+          <thead>
+            <tr>
+              <th>Kundennr.</th>
+              <th>Name</th>
+              <th>E‑Mail</th>
+              <th>Telefon</th>
+              <th>Schiff</th>
+              <th>IMO</th>
+              <th>Auftragsnr.</th>
+              <th>Betrag</th>
+              <th>IBAN (maskiert)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Gefüllt durch JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>
+
