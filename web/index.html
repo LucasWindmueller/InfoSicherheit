@@ -41,6 +41,30 @@
       </form>
     </section>
 
+    <!-- 2FA Screen -->
+    <section id="twofa-screen" class="card card--center" hidden>
+      <header class="header">
+        <div class="brand">
+          <div class="brand__logo" aria-hidden="true">🔒</div>
+          <div class="brand__text">
+            <h1>Zweiter Schritt</h1>
+            <p class="muted">Bitte 4-stelligen 2FA-Code eingeben</p>
+          </div>
+        </div>
+      </header>
+      <form id="twofa-form" class="form" autocomplete="off">
+        <div class="form__row">
+          <label for="twofa-code">2FA-Code</label>
+          <input id="twofa-code" name="twofa" type="text" inputmode="numeric" pattern="\d{4}" maxlength="4" required placeholder="2FA Code" />
+        </div>
+        <div class="form__row form__actions">
+          <button class="btn btn--primary" type="submit">Bestätigen</button>
+          <button class="btn btn--ghost" id="twofa-cancel" type="button">Abbrechen</button>
+        </div>
+        <p id="twofa-error" class="error" role="alert" aria-live="polite" hidden>Falscher Code. Bitte erneut versuchen.</p>
+      </form>
+    </section>
+
     <!-- Database Screen -->
     <section id="db-screen" class="card card--full" hidden>
       <header class="topbar">
@@ -85,4 +109,3 @@
   <script src="./app.js" defer></script>
 </body>
 </html>
-

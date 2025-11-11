@@ -3,15 +3,23 @@
 
   const VALID_USER = 'Admin';
   const VALID_PASS = 'Admin123';
+  const VALID_2FA = '1234';
 
   const els = {
     loginScreen: document.getElementById('login-screen'),
+    twofaScreen: document.getElementById('twofa-screen'),
     dbScreen: document.getElementById('db-screen'),
     form: document.getElementById('login-form'),
     username: document.getElementById('username'),
     password: document.getElementById('password'),
     togglePw: document.getElementById('toggle-password'),
     error: document.getElementById('login-error'),
+    // 2FA
+    twofaForm: document.getElementById('twofa-form'),
+    twofaCode: document.getElementById('twofa-code'),
+    twofaError: document.getElementById('twofa-error'),
+    twofaCancel: document.getElementById('twofa-cancel'),
+    // DB
     logout: document.getElementById('logout'),
     filter: document.getElementById('filter'),
     exportCsv: document.getElementById('exportCsv'),
@@ -92,51 +100,93 @@
     setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
   }
 
+  function show(view){
+    els.loginScreen.hidden = view !== 'login';
+    els.twofaScreen.hidden = view !== '2fa';
+    els.dbScreen.hidden = view !== 'db';
+  }
+
   function setLoggedIn(on){
-    els.loginScreen.hidden = !!on;
-    els.dbScreen.hidden = !on;
-    if(on){ renderTable(demoData); }
+    sessionStorage.setItem('demo_logged_in', on ? '1' : '0');
+    if(on){
+      show('db');
+      renderTable(demoData);
+    } else {
+      show('login');
+    }
   }
 
   // Event wiring
+  // 1) Login -> 2FA Bildschirm
   els.form.addEventListener('submit', (e) => {
     e.preventDefault();
     const u = els.username.value.trim();
     const p = els.password.value;
     if(u === VALID_USER && p === VALID_PASS){
       els.error.hidden = true;
-      sessionStorage.setItem('demo_logged_in', '1');
-      setLoggedIn(true);
-      els.filter.focus();
+      show('2fa');
+      els.twofaCode.value = '';
+      els.twofaError.hidden = true;
+      setTimeout(() => els.twofaCode.focus(), 0);
     } else {
       els.error.hidden = false;
     }
   });
 
+  // 2) 2FA prüfen -> DB
+  els.twofaForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const code = els.twofaCode.value.trim();
+    if(code === VALID_2FA){
+      els.twofaError.hidden = true;
+      setLoggedIn(true);
+      els.filter.value = '';
+      setTimeout(() => els.filter.focus(), 0);
+    } else {
+      els.twofaError.hidden = false;
+    }
+  });
+
+  // 3) 2FA abbrechen -> zurück zum Login
+  els.twofaCancel.addEventListener('click', () => {
+    show('login');
+    els.password.value = '';
+    els.twofaCode.value = '';
+    els.twofaError.hidden = true;
+    setTimeout(() => els.username.focus(), 0);
+  });
+
+  // Passwort anzeigen/ausblenden
   els.togglePw.addEventListener('click', () => {
-    const show = els.password.type === 'password';
-    els.password.type = show ? 'text' : 'password';
-    els.togglePw.setAttribute('aria-pressed', String(show));
+    const showPw = els.password.type === 'password';
+    els.password.type = showPw ? 'text' : 'password';
+    els.togglePw.setAttribute('aria-pressed', String(showPw));
   });
 
+  // Abmelden
   els.logout.addEventListener('click', () => {
-    sessionStorage.removeItem('demo_logged_in');
-    els.form.reset();
     setLoggedIn(false);
-    els.username.focus();
+    els.form.reset();
+    els.twofaForm.reset();
+    els.error.hidden = true;
   });
 
+  // Filter
   els.filter.addEventListener('input', () => filterTable(els.filter.value));
 
+  // CSV Export
   els.exportCsv.addEventListener('click', () => {
     const q = els.filter.value.trim().toLowerCase();
     const rows = q ? demoData.filter(r => Object.values(r).some(v => String(v).toLowerCase().includes(q))) : demoData;
-    const csv = toCsv(rows);
-    download('kundendaten_demo.csv', csv);
+    download('kundendaten_demo.csv', toCsv(rows));
   });
 
-  // Init on load
+  // Init
   const wasLogged = sessionStorage.getItem('demo_logged_in') === '1';
-  setLoggedIn(wasLogged);
+  if(wasLogged){
+    setLoggedIn(true);
+  } else {
+    show('login');
+    setTimeout(() => els.username && els.username.focus(), 0);
+  }
 })();
-
