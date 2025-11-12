@@ -40,23 +40,13 @@
     { id: 'C-10095', name: 'Yusuf Demir', email: 'yusuf.demir@example.com', phone: '+49 40 4010 3030', ship: 'MS Jadewind', imo: '9411570', order: 'WO-240729-01', amount: 18990.00, iban: 'DE12501234567890123456' },
   ];
 
-  function maskIban(iban){
-    if(!iban) return '';
-    const keep = 4;
-    const clean = String(iban).replace(/\s+/g,'');
-    const start = clean.slice(0,2);
-    const end = clean.slice(-keep);
-    const hidden = clean.slice(2, -keep).replace(/./g, '•');
-    return [start, hidden, end].join('');
-  }
-
   function formatAmount(n){
     try { return new Intl.NumberFormat('de-DE', { style:'currency', currency:'EUR' }).format(n); }
     catch(_) { return `${n.toFixed(2)} €`; }
   }
 
   function rowToArray(r){
-    return [r.id, r.name, r.email, r.phone, r.ship, r.imo, r.order, formatAmount(r.amount), maskIban(r.iban)];
+    return [r.id, r.name, r.email, r.phone, r.ship, r.imo, r.order, formatAmount(r.amount), r.iban];
   }
 
   function renderTable(rows){
@@ -82,7 +72,7 @@
   }
 
   function toCsv(rows){
-    const header = ['Kundennr','Name','E-Mail','Telefon','Schiff','IMO','Auftragsnr','Betrag','IBAN(maskiert)'];
+    const header = ['Kundennr','Name','E-Mail','Telefon','Schiff','IMO','Auftragsnr','Betrag','IBAN'];
     const lines = [header.map(s => '"'+s.replace(/"/g,'""')+'"').join(',')];
     for(const r of rows){
       const cells = rowToArray(r).map(s => '"'+String(s).replace(/"/g,'""')+'"');
